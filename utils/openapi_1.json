@@ -1,0 +1,784 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+        "title": "TAMS API v1",
+        "version": "1.0.0",
+        "description": ""
+    },
+    "paths": {
+        "/api/v1/assets/": {
+            "post": {
+                "operationId": "assets_api_create_asset",
+                "summary": "Create Asset",
+                "parameters": [],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ResponseDTO"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ResponseDTO"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": ["Assets"],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AssetPostParams"
+                            }
+                        }
+                    },
+                    "required": true
+                }
+            }
+        },
+        "/api/v1/assets/list/": {
+            "get": {
+                "operationId": "assets_api_list_assets",
+                "summary": "List Assets",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "order_by",
+                        "schema": {
+                            "title": "Order By",
+                            "description": "order by field",
+                            "type": "string"
+                        },
+                        "required": false,
+                        "description": "order by field"
+                    },
+                    {
+                        "in": "query",
+                        "name": "created_by",
+                        "schema": {
+                            "title": "Created By",
+                            "description": "created by user id",
+                            "type": "integer"
+                        },
+                        "required": false,
+                        "description": "created by user id"
+                    },
+                    {
+                        "in": "query",
+                        "name": "limit",
+                        "schema": {
+                            "title": "Limit",
+                            "default": 100,
+                            "minimum": 1,
+                            "type": "integer"
+                        },
+                        "required": false
+                    },
+                    {
+                        "in": "query",
+                        "name": "offset",
+                        "schema": {
+                            "title": "Offset",
+                            "default": 0,
+                            "minimum": 0,
+                            "type": "integer"
+                        },
+                        "required": false
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AssetPreviewPagedDTO"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": ["Assets"]
+            }
+        },
+        "/api/v1/assets/list/count/": {
+            "get": {
+                "operationId": "assets_api_count_of_list_assets",
+                "summary": "Count Of List Assets",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "order_by",
+                        "schema": {
+                            "title": "Order By",
+                            "description": "order by field",
+                            "type": "string"
+                        },
+                        "required": false,
+                        "description": "order by field"
+                    },
+                    {
+                        "in": "query",
+                        "name": "created_by",
+                        "schema": {
+                            "title": "Created By",
+                            "description": "created by user id",
+                            "type": "integer"
+                        },
+                        "required": false,
+                        "description": "created by user id"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AssetCountDTO"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": ["Assets"]
+            }
+        },
+        "/api/v1/assets/{id}/": {
+            "get": {
+                "operationId": "assets_api_retrieve_asset",
+                "summary": "Retrieve Asset",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "title": "Id",
+                            "type": "integer"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "query",
+                        "name": "version",
+                        "schema": {
+                            "title": "Version",
+                            "description": "version of asset",
+                            "type": "integer"
+                        },
+                        "required": false,
+                        "description": "version of asset"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AssetDTO"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": ["Assets"]
+            },
+            "put": {
+                "operationId": "assets_api_update_asset",
+                "summary": "Update Asset",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "title": "Id",
+                            "type": "integer"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "query",
+                        "name": "width",
+                        "schema": {
+                            "title": "Width",
+                            "type": "integer"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "query",
+                        "name": "height",
+                        "schema": {
+                            "title": "Height",
+                            "type": "integer"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "query",
+                        "name": "file_size",
+                        "schema": {
+                            "title": "File Size",
+                            "type": "integer"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ResponseDTO"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ResponseDTO"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": ["Assets"]
+            },
+            "delete": {
+                "operationId": "assets_api_delete_asset",
+                "summary": "Delete Asset",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "title": "Id",
+                            "type": "integer"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ResponseDTO"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ResponseDTO"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": ["Assets"]
+            }
+        },
+        "/api/v1/assets/{id}/history/": {
+            "get": {
+                "operationId": "assets_api_list_asset_history",
+                "summary": "List Asset History",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "title": "Id",
+                            "type": "integer"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "query",
+                        "name": "limit",
+                        "schema": {
+                            "title": "Limit",
+                            "default": 100,
+                            "minimum": 1,
+                            "type": "integer"
+                        },
+                        "required": false
+                    },
+                    {
+                        "in": "query",
+                        "name": "offset",
+                        "schema": {
+                            "title": "Offset",
+                            "default": 0,
+                            "minimum": 0,
+                            "type": "integer"
+                        },
+                        "required": false
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AssetHistoryPagedDTO"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": ["Assets"]
+            }
+        },
+        "/api/v1/assets/{id}/comments/": {
+            "post": {
+                "operationId": "assets_api_post_asset_comment",
+                "summary": "Post Asset Comment",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "title": "Id",
+                            "type": "integer"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "query",
+                        "name": "text",
+                        "schema": {
+                            "title": "Text",
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ResponseDTO"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ResponseDTO"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": ["Assets"]
+            }
+        },
+        "/api/v1/assets/{id}/comments/list/": {
+            "get": {
+                "operationId": "assets_api_list_asset_comments",
+                "summary": "List Asset Comments",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "title": "Id",
+                            "type": "integer"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "query",
+                        "name": "limit",
+                        "schema": {
+                            "title": "Limit",
+                            "default": 100,
+                            "minimum": 1,
+                            "type": "integer"
+                        },
+                        "required": false
+                    },
+                    {
+                        "in": "query",
+                        "name": "offset",
+                        "schema": {
+                            "title": "Offset",
+                            "default": 0,
+                            "minimum": 0,
+                            "type": "integer"
+                        },
+                        "required": false
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AssetCommentPagedDTO"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": ["Assets"]
+            }
+        },
+        "/api/v1/assets/{id}/comments/{comment_id}/": {
+            "delete": {
+                "operationId": "assets_api_delete_asset_comment",
+                "summary": "Delete Asset Comment",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "title": "Id",
+                            "type": "integer"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "comment_id",
+                        "schema": {
+                            "title": "Comment Id",
+                            "type": "integer"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ResponseDTO"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ResponseDTO"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": ["Assets"]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "ResponseDTO": {
+                "title": "ResponseDTO",
+                "type": "object",
+                "properties": {
+                    "sucess": {
+                        "title": "Sucess",
+                        "type": "boolean"
+                    },
+                    "detail": {
+                        "title": "Detail",
+                        "default": "",
+                        "type": "string"
+                    }
+                },
+                "required": ["sucess"]
+            },
+            "AssetPostParams": {
+                "title": "AssetPostParams",
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "title": "Name",
+                        "type": "string"
+                    },
+                    "width": {
+                        "title": "Width",
+                        "type": "integer"
+                    },
+                    "height": {
+                        "title": "Height",
+                        "type": "integer"
+                    },
+                    "file_size": {
+                        "title": "File Size",
+                        "type": "integer"
+                    }
+                },
+                "required": ["name", "width", "height", "file_size"]
+            },
+            "AssetPreviewDTO": {
+                "title": "AssetPreviewDTO",
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "title": "Id",
+                        "type": "integer"
+                    },
+                    "name": {
+                        "title": "Name",
+                        "type": "string"
+                    },
+                    "is_available": {
+                        "title": "Is Available",
+                        "type": "boolean"
+                    },
+                    "thumbnail_url": {
+                        "title": "Thumbnail Url",
+                        "type": "string"
+                    }
+                },
+                "required": ["id", "name", "is_available", "thumbnail_url"]
+            },
+            "AssetPreviewPagedDTO": {
+                "title": "AssetPreviewPagedDTO",
+                "type": "object",
+                "properties": {
+                    "objects": {
+                        "title": "Objects",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/AssetPreviewDTO"
+                        }
+                    },
+                    "count": {
+                        "title": "Count",
+                        "type": "integer"
+                    }
+                },
+                "required": ["objects", "count"]
+            },
+            "AssetCountDTO": {
+                "title": "AssetCountDTO",
+                "type": "object",
+                "properties": {
+                    "count": {
+                        "title": "Count",
+                        "type": "integer"
+                    }
+                },
+                "required": ["count"]
+            },
+            "UserSimpleSchema": {
+                "title": "UserSimpleSchema",
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "title": "Id",
+                        "type": "integer"
+                    },
+                    "name": {
+                        "title": "Name",
+                        "maxLength": 100,
+                        "type": "string"
+                    },
+                    "profile_image": {
+                        "title": "Profile Image",
+                        "type": "string"
+                    }
+                },
+                "required": ["name"]
+            },
+            "AssetDTO": {
+                "title": "AssetDTO",
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "title": "Id",
+                        "type": "integer"
+                    },
+                    "name": {
+                        "title": "Name",
+                        "type": "string"
+                    },
+                    "url": {
+                        "title": "Url",
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "title": "Created At",
+                        "type": "string"
+                    },
+                    "updated_at": {
+                        "title": "Updated At",
+                        "type": "string"
+                    },
+                    "created_by": {
+                        "$ref": "#/components/schemas/UserSimpleSchema"
+                    },
+                    "updated_by": {
+                        "$ref": "#/components/schemas/UserSimpleSchema"
+                    },
+                    "is_available": {
+                        "title": "Is Available",
+                        "type": "boolean"
+                    },
+                    "file_info": {
+                        "title": "File Info",
+                        "type": "string"
+                    },
+                    "version": {
+                        "title": "Version",
+                        "type": "integer"
+                    }
+                },
+                "required": [
+                    "id",
+                    "name",
+                    "url",
+                    "created_at",
+                    "updated_at",
+                    "created_by",
+                    "updated_by",
+                    "is_available",
+                    "file_info",
+                    "version"
+                ]
+            },
+            "AssetHistoryDTO": {
+                "title": "AssetHistoryDTO",
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "title": "Id",
+                        "type": "integer"
+                    },
+                    "user": {
+                        "$ref": "#/components/schemas/UserSimpleSchema"
+                    },
+                    "action": {
+                        "title": "Action",
+                        "type": "string"
+                    },
+                    "logged_at": {
+                        "title": "Logged At",
+                        "type": "string"
+                    },
+                    "version": {
+                        "title": "Version",
+                        "type": "integer"
+                    },
+                    "version_id": {
+                        "title": "Version Id",
+                        "type": "string"
+                    },
+                    "thumbnail_url": {
+                        "title": "Thumbnail Url",
+                        "type": "string"
+                    },
+                    "version_url": {
+                        "title": "Version Url",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "id",
+                    "user",
+                    "action",
+                    "logged_at",
+                    "version",
+                    "version_id",
+                    "thumbnail_url",
+                    "version_url"
+                ]
+            },
+            "AssetHistoryPagedDTO": {
+                "title": "AssetHistoryPagedDTO",
+                "type": "object",
+                "properties": {
+                    "objects": {
+                        "title": "Objects",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/AssetHistoryDTO"
+                        }
+                    },
+                    "count": {
+                        "title": "Count",
+                        "type": "integer"
+                    }
+                },
+                "required": ["objects", "count"]
+            },
+            "AssetCommentDTO": {
+                "title": "AssetCommentDTO",
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "title": "Id",
+                        "type": "integer"
+                    },
+                    "user": {
+                        "$ref": "#/components/schemas/UserSimpleSchema"
+                    },
+                    "text": {
+                        "title": "Text",
+                        "type": "string"
+                    },
+                    "commented_at": {
+                        "title": "Commented At",
+                        "type": "string"
+                    },
+                    "is_mine": {
+                        "title": "Is Mine",
+                        "type": "boolean"
+                    }
+                },
+                "required": ["id", "user", "text", "commented_at", "is_mine"]
+            },
+            "AssetCommentPagedDTO": {
+                "title": "AssetCommentPagedDTO",
+                "type": "object",
+                "properties": {
+                    "objects": {
+                        "title": "Objects",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/AssetCommentDTO"
+                        }
+                    },
+                    "count": {
+                        "title": "Count",
+                        "type": "integer"
+                    }
+                },
+                "required": ["objects", "count"]
+            }
+        }
+    }
+}

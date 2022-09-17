@@ -1,0 +1,22 @@
+{
+    "dictionary_item_added": [
+        "root['paths']['/api/v1/assets/presigned_url/']",
+        "root['paths']['/api/v1/assets/presigned_url/check_upload/']",
+        "root['paths']['/api/v1/admin/sync/assets/']",
+        "root['paths']['/api/v1/admin/sync/assets/history/']",
+        "root['components']['schemas']['PresignedUrlFieldsSchema']",
+        "root['components']['schemas']['PresignedUrlDTO']",
+        "root['components']['schemas']['ResponseDTO']['properties']['success']"
+    ],
+    "dictionary_item_removed": [
+        "root['paths']['/api/v1/assets/']",
+        "root['components']['schemas']['AssetPostParams']",
+        "root['components']['schemas']['ResponseDTO']['properties']['sucess']"
+    ],
+    "values_changed": {
+        "root['components']['schemas']['ResponseDTO']['required'][0]": {
+            "new_value": "success",
+            "old_value": "sucess"
+        }
+    }
+}
