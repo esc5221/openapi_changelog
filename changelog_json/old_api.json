@@ -1,0 +1,117 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+        "title": "TAMS API v1",
+        "version": "1.0.0",
+        "description": ""
+    },
+    "paths": {
+        "(added_api_1)": {
+            "trace": {
+                "tags": ["Assets"]
+              }
+        },
+        "(added_api_2)": {
+            "trace": {
+                "tags": ["Assets"]
+              }
+        },
+        "/api/v1/assets/": {
+            "post": {
+                "operationId": "assets_api_create_asset",
+                "summary": "Create Asset",
+                "parameters": [],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ResponseDTO"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ResponseDTO"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": ["Assets"],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AssetPostParams"
+                            }
+                        }
+                    },
+                    "required": true
+                }
+            }
+        },
+        "(added_api_3)": {
+            "trace": {
+                "tags": ["Admin"]
+              }
+        },
+        "(added_api_4)": {
+            "trace": {
+                "tags": ["Admin"]
+              }
+        }
+    },
+    "components": {
+        "schemas": {
+            "(added_schema_1)": {
+            },
+            "(added_schema_2)": {
+            },
+            "ResponseDTO": {
+                "title": "ResponseDTO",
+                "type": "object",
+                "properties": {
+                    "sucess": {
+                        "title": "Sucess",
+                        "type": "boolean"
+                    },
+                    "detail": {
+                        "title": "Detail",
+                        "default": "",
+                        "type": "string"
+                    }
+                },
+                "required": ["sucess"]
+            },
+            "AssetPostParams": {
+                "title": "AssetPostParams",
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "title": "Name",
+                        "type": "string"
+                    },
+                    "width": {
+                        "title": "Width",
+                        "type": "integer"
+                    },
+                    "height": {
+                        "title": "Height",
+                        "type": "integer"
+                    },
+                    "file_size": {
+                        "title": "File Size",
+                        "type": "integer"
+                    }
+                },
+                "required": ["name", "width", "height", "file_size"]
+            }
+        }
+    }
+}

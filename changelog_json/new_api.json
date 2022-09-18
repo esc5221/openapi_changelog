@@ -1,0 +1,178 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+        "title": "TAMS API v1",
+        "version": "1.0.0",
+        "description": ""
+    },
+    "paths": {
+        "/api/v1/assets/presigned_url/": {
+            "get": {
+                "operationId": "assets_api_get_asset_presigned_url",
+                "summary": "Get Asset Presigned Url",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "filename",
+                        "schema": {
+                            "title": "Filename",
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PresignedUrlDTO"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": ["Assets"]
+            }
+        },
+        "/api/v1/assets/presigned_url/check_upload/": {
+            "get": {
+                "operationId": "assets_api_check_asset_upload",
+                "summary": "Check Asset Upload",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "filename",
+                        "schema": {
+                            "title": "Filename",
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "tags": ["Assets"]
+            }
+        },
+        "(removed_api_1)": {
+            "trace": {
+                "tags": ["Assets"]
+              }
+        },
+        "/api/v1/admin/sync/assets/": {
+            "get": {
+                "operationId": "admin_api_sync_assets",
+                "summary": "Sync Assets",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "tags": ["Admin"]
+            }
+        },
+        "/api/v1/admin/sync/assets/history/": {
+            "get": {
+                "operationId": "admin_api_sync_versions",
+                "summary": "Sync Versions",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "filename",
+                        "schema": {
+                            "title": "Filename",
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "tags": ["Admin"]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "PresignedUrlFieldsSchema": {
+                "title": "PresignedUrlFieldsSchema",
+                "type": "object",
+                "properties": {
+                    "key": {
+                        "title": "Key",
+                        "type": "string"
+                    },
+                    "x_amz_algorithm": {
+                        "title": "X-Amz-Algorithm",
+                        "type": "string"
+                    },
+                    "x_amz_credential": {
+                        "title": "X-Amz-Credential",
+                        "type": "string"
+                    },
+                    "x_amz_date": {
+                        "title": "X-Amz-Date",
+                        "type": "string"
+                    },
+                    "policy": {
+                        "title": "Policy",
+                        "type": "string"
+                    },
+                    "x_amz_signature": {
+                        "title": "X-Amz-Signature",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "key",
+                    "x_amz_algorithm",
+                    "x_amz_credential",
+                    "x_amz_date",
+                    "policy",
+                    "x_amz_signature"
+                ]
+            },
+            "PresignedUrlDTO": {
+                "title": "PresignedUrlDTO",
+                "type": "object",
+                "properties": {
+                    "url": {
+                        "title": "Url",
+                        "type": "string"
+                    },
+                    "fields": {
+                        "$ref": "#/components/schemas/PresignedUrlFieldsSchema"
+                    }
+                },
+                "required": ["url", "fields"]
+            },
+            "ResponseDTO": {
+                "title": "ResponseDTO",
+                "type": "object",
+                "properties": {
+                    "success": {
+                        "title": "Success",
+                        "type": "boolean"
+                    },
+                    "detail": {
+                        "title": "Detail",
+                        "default": "",
+                        "type": "string"
+                    }
+                },
+                "required": ["success"]
+            },
+            "(removed_schema_1)": {
+            }
+        }
+    }
+}
