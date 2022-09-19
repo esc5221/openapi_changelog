@@ -36,7 +36,7 @@ function InputField({value, onChange }) {
             value={value} 
             onChange={onChange} 
             style={{ 
-              width: "300px",
+              width: "400px",
               fontSize: "20px",
             }}
             />
@@ -47,9 +47,9 @@ function InputField({value, onChange }) {
 // Provide the plugin to Swagger-UI, and select OperationsLayout
 // as the layout for Swagger-UI
 function SwaggerComponent() {
-    var [githubRepo, setGithubRepo] = useState("esc5221/openapi_changelog");
+    var [githubRepo, setGithubRepo] = useState("TAMS-Project/tams_api_changelog");
     var [githubBranch, setGithubBranch] = useState("master");
-    var [githubChangelogFolder, setGithubChangelogFolder] = useState("changelog_json");
+    var [githubChangelogFolder, setGithubChangelogFolder] = useState("PR22");
 
 
     useEffect(() => {
@@ -67,14 +67,14 @@ function SwaggerComponent() {
             <div class="row" style={{ display: "flex" }}>
                 <div class="column" style={{ flex: "50%" }}>
                     <SwaggerUI
-                        url={`https://raw.githubusercontent.com/${githubRepo}/${githubBranch}/${githubChangelogFolder}/old_api.json`}
+                        url={`https://raw.githubusercontent.com/${githubRepo}/${githubBranch}/${githubChangelogFolder}/openapi_old_cmp.json`}
                         plugins={[AugmentingLayoutPlugin]}
                         layout="AugmentingLayout"
                     />
                 </div>
                 <div class="column" style={{ flex: "50%" }}>
                     <SwaggerUI
-                        url={`https://raw.githubusercontent.com/${githubRepo}/${githubBranch}/${githubChangelogFolder}/new_api.json`}
+                        url={`https://raw.githubusercontent.com/${githubRepo}/${githubBranch}/${githubChangelogFolder}/openapi_new_cmp.json`}
                         plugins={[AugmentingLayoutPlugin]}
                         layout="AugmentingLayout"
                     />
