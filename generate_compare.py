@@ -1,4 +1,4 @@
-import os
+import os, sys
 import json
 from copy import deepcopy
 
@@ -159,18 +159,20 @@ def remove_unchanged(old_json, new_json):
     Save view_json to file
     '''
 
-    with open('old_view.json', 'w') as f:
+    with open('openapi_old_cmp.json', 'w') as f:
         json.dump(old_view_json, f, indent=4)
     
-    with open('new_view.json', 'w') as f:
+    with open('openapi_new_cmp.json', 'w') as f:
         json.dump(new_view_json, f, indent=4)
-    
 
-current_dir = os.path.dirname(os.path.abspath(__file__))
-with open(current_dir + '/utils/openapi_1.json', 'r') as f:
-    openapi_1 = json.load(f)
-with open(current_dir + '/utils/openapi_2.json', 'r') as f:
-    openapi_2 = json.load(f)
+if __name__ == '__main__':
+    old_json_path = sys.argv[1]
+    new_json_path = sys.argv[2]
 
+    with open(old_json_path) as f:
+        old_json = json.load(f)
 
-remove_unchanged(openapi_1, openapi_2)
+    with open(new_json_path) as f:
+        new_json = json.load(f)
+
+    remove_unchanged(old_json, new_json)
