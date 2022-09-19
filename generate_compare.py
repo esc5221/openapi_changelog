@@ -101,10 +101,6 @@ def remove_unchanged(old_json, new_json):
     '''
     @dev 
     '''
-            
-
-    with open('merged.json', 'w') as f:
-        json.dump(merged_json, f, indent=4)
 
     '''
     Compare the old and new json with the keys in the 'paths'
@@ -141,9 +137,9 @@ def remove_unchanged(old_json, new_json):
     for key in merged_json['components']['schemas']:
         if key in old_json['components']['schemas'] and key in new_json['components']['schemas']:
             # compare if two dict are same
-            if str(old_json['components']['schemas'][key]) != str(new_json['components']['schemas'][key]):
-                old_view_json['components']['schemas'][key] = old_json['components']['schemas'][key]
-                new_view_json['components']['schemas'][key] = new_json['components']['schemas'][key]            
+            #if str(old_json['components']['schemas'][key]) != str(new_json['components']['schemas'][key]):
+            old_view_json['components']['schemas'][key] = old_json['components']['schemas'][key]
+            new_view_json['components']['schemas'][key] = new_json['components']['schemas'][key]            
         # removed
         elif key in old_json['components']['schemas']:
             old_view_json['components']['schemas'][key] = old_json['components']['schemas'][key]
