@@ -239,7 +239,7 @@ function SwaggerComponent() {
         <>
             <Box
                 display="flex"
-                flexDirection="row"
+                flexDirection="column"
                 justifyContent="space-between"
                 alignItems="bottom"
                 style={{ padding: "16px" }}
