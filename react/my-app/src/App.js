@@ -10,7 +10,7 @@ import "swagger-ui-react/swagger-ui.css";
 
 import { Switch } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import { FormControl, InputLabel, MenuItem, Select, Input, Chip} from "@material-ui/core";
+import { FormControl, InputLabel, MenuItem, Select, Input, Chip } from "@material-ui/core";
 import { Box } from "@material-ui/core";
 
 import useEventListener from "./Hook";
@@ -87,6 +87,66 @@ function SelectField({ valueName, value, onChange, options, style }) {
     );
 }
 
+function Comment({ comment }) {
+    return (
+        <Box
+            style={{
+                border: "2px solid lightgray",
+                padding: "5px",
+                margin: "5px",
+                borderRadius: "10px",
+                backgroundColor: "white",
+            }}
+        >
+            <div style={{ alignItems: "center", display: "flex", padding: "5px" }}>
+                <img src={comment.userAvatar} style={{ width: "16px", height: "16px" }} />
+                <span style={{ marginLeft: "5px", fontSize: "12px" }}>{comment.user}</span>
+            </div>
+            <span style={{ marginLeft: "5px" }}>{comment.body}</span>
+        </Box>
+    );
+}
+function ToggleSwitch({ isToggleOn, onChange }) {
+    return (
+        <div style={{ display: "flex", alignItems: "center" }}>
+            <span style={{ marginLeft: "5px" }}>Show Comments</span>
+            <Switch checked={isToggleOn} onChange={onChange} color="primary" />
+        </div>
+    );
+}
+
+function CommentSection({ comments, isToggleOn, onChange }) {
+    return (
+        <Box
+            style={{
+                border: "2px solid lightgray",
+                padding: "5px",
+                margin: "5px",
+                borderRadius: "10px",
+                backgroundColor: "#fafaff",
+            }}
+        >
+            <div
+                style={{ display: "flex", alignItems: "justify", justifyContent: "space-between" }}
+            >
+                <h3 style={{ padding: "0px 10px" }}>Comments</h3>
+                <ToggleSwitch isToggleOn={isToggleOn} onChange={onChange} />
+            </div>
+            {isToggleOn && comments.length > 0 ? (
+                <div>
+                    {comments.map((comment) => (
+                        <Comment comment={comment} />
+                    ))}
+                </div>
+            ) : isToggleOn && comments.length == 0 ? (
+                <div style={{ padding: "5px 10px" }}>No comments</div>
+            ) : (
+                <></>
+            )}
+        </Box>
+    );
+}
+
 function OpenApiUrl(githubRepo, githubBranch, githubChangelogFolder, type) {
     let url =
         "https://raw.githubusercontent.com/" +
@@ -104,6 +164,11 @@ function OpenApiUrl(githubRepo, githubBranch, githubChangelogFolder, type) {
 
 function LatestCommitUrl(githubRepo, githubBranch, path) {
     let url = "https://api.github.com/repos/" + githubRepo + "/commits?path=" + path;
+    return url;
+}
+
+function CommitCommentUrl(githubRepo, commitSha) {
+    let url = "https://api.github.com/repos/" + githubRepo + "/commits/" + commitSha + "/comments";
     return url;
 }
 
@@ -167,8 +232,14 @@ function SwaggerComponent() {
     var [githubBranch, setGithubBranch] = useState("master");
     var [githubChangelogFolder, setGithubChangelogFolder] = useState("");
     var [viewType, setViewType] = useState("_cmp"); // "cmp": diff only, "": full docs
+    var [isToggleOn, setIsToggleOn] = useState(true);
     var [prList, setPrList] = useState([]);
     var [prTime, setPrTime] = useState("");
+    var [prComments, setPrComments] = useState([]);
+
+    const toggleComments = () => {
+        setIsToggleOn(!isToggleOn);
+    };
 
     const keyPress = (e) => {
         // left arrow
@@ -177,8 +248,8 @@ function SwaggerComponent() {
             if (prList.length > 0) {
                 let currentPR = githubChangelogFolder;
                 let previousPR = prList.indexOf(currentPR) + 1;
-                if (previousPR > prList.length-1) {
-                    previousPR = prList.length-1;
+                if (previousPR > prList.length - 1) {
+                    previousPR = prList.length - 1;
                 }
                 setGithubChangelogFolder(prList[previousPR]);
             }
@@ -195,7 +266,18 @@ function SwaggerComponent() {
                 setGithubChangelogFolder(prList[nextPR]);
             }
         }
-    }
+        // key t
+        if (e.keyCode === 84) {
+            // toggle between cmp and all
+            setViewType(state.cmpOrAll ? "" : "_cmp");
+            setState({ ...state, cmpOrAll: !state.cmpOrAll });
+        }
+        // key c
+        if (e.keyCode === 67) {
+            // toggle comments
+            toggleComments();
+        }
+    };
 
     const handleChangeViewType = (event) => {
         setState({ ...state, [event.target.name]: event.target.checked });
@@ -210,13 +292,34 @@ function SwaggerComponent() {
         return pr_list.reverse();
     };
 
-    const getPrTime = async (pr) => {
+    const getPrInfo = async (pr) => {
         var lastCommitApiUrl = LatestCommitUrl(githubRepo, githubBranch, pr);
         var response = await fetch(lastCommitApiUrl);
         var data = await response.json();
         var time = data[0].commit.author.date;
-        console.log(time);
         return time;
+    };
+
+    const getPrComment = async (pr) => {
+        var lastCommitApiUrl = LatestCommitUrl(githubRepo, githubBranch, pr);
+        var response = await fetch(lastCommitApiUrl);
+        var data = await response.json();
+        var commitHash = data[0].sha;
+        var commentApiUrl = CommitCommentUrl(githubRepo, commitHash);
+        var response = await fetch(commentApiUrl);
+        var data = await response.json();
+        if (data) {
+            var comments = data.map((item) => {
+                return {
+                    user: item.user.login,
+                    userAvatar: item.user.avatar_url,
+                    body: item.body,
+                };
+            });
+        } else {
+            var comments = [];
+        }
+        return comments;
     };
 
     // set initial value for githubChangelogFolder
@@ -228,8 +331,11 @@ function SwaggerComponent() {
     }, []);
 
     useEffect(() => {
-        getPrTime(githubChangelogFolder).then((time) => {
+        getPrInfo(githubChangelogFolder).then((time, comments) => {
             setPrTime(time);
+        });
+        getPrComment(githubChangelogFolder).then((comments) => {
+            setPrComments(comments);
         });
     }, [githubChangelogFolder]);
 
@@ -238,63 +344,90 @@ function SwaggerComponent() {
     return (
         <>
             <Box
-                display="flex"
-                flexDirection="column"
-                justifyContent="space-between"
-                alignItems="bottom"
-                style={{ padding: "16px" }}
+                style={{
+                    display: "flex",
+                    flexDirection: "column",
+                }}
             >
-                <Box style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                    <Box style={{ width: "auto" , marginRight: "16px"}}>
-                        <h1>OpenAPI Changelog</h1>
-                    </Box>
-                    <Switch
-                        classes={{
-                            root: classes.root,
-                            switchBase: classes.switchBase,
-                            thumb: classes.thumb,
-                            track: classes.track,
-                            checked: classes.checked,
+                <Box
+                    style={{
+                        display: "flex",
+                        flexDirection: "row",
+                    }}
+                >
+                    <Box
+                        style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "space-between",
+                            padding: "10px 20px",
                         }}
-                        checked={state.cmpOrAll}
-                        onChange={handleChangeViewType}
-                        name="cmpOrAll"
-                        inputProps={{ "aria-label": "secondary checkbox" }}
-                    />
+                    >
+                        <Box
+                            style={{ display: "flex", flexDirection: "row", alignItems: "center" }}
+                        >
+                            <Box style={{ width: "auto", marginRight: "16px" }}>
+                                <h1>OpenAPI Changelog</h1>
+                            </Box>
+                            <Switch
+                                classes={{
+                                    root: classes.root,
+                                    switchBase: classes.switchBase,
+                                    thumb: classes.thumb,
+                                    track: classes.track,
+                                    checked: classes.checked,
+                                }}
+                                checked={state.cmpOrAll}
+                                onChange={handleChangeViewType}
+                                name="cmpOrAll"
+                                inputProps={{ "aria-label": "secondary checkbox" }}
+                            />
+                        </Box>
+                        <Box
+                            style={{
+                                display: "flex",
+                                flexDirection: "row",
+                                alignItems: "baseline",
+                            }}
+                        >
+                            <InputField
+                                valueName="Github Repo"
+                                value={githubRepo}
+                                onChange={(e) => setGithubRepo(e.target.value)}
+                                style={{ width: "400px", fontSize: "20px" }}
+                            />
+                            <InputField
+                                valueName="Branch"
+                                value={githubBranch}
+                                onChange={(e) => setGithubBranch(e.target.value)}
+                                style={{ width: "200px", fontSize: "20px" }}
+                            />
+                            <SelectField
+                                valueName="PR"
+                                value={githubChangelogFolder}
+                                onChange={(e) => setGithubChangelogFolder(e.target.value)}
+                                options={prList}
+                                style={{ width: "200px", fontSize: "20px" }}
+                            />
+                            <Chip
+                                // format prTime to "YYYY-MM-DD HH:mm:ss", with GMT+9
+                                label={new Date(prTime).toLocaleString("ko-KR", {
+                                    timeZone: "Asia/Tokyo",
+                                })}
+                                variant="outlined"
+                                color="primary"
+                                style={{ fontWeight: "500", fontSize: "16px" }}
+                            />
+                        </Box>
+                        <p>* use left, right arrow keys to navigate between PRs</p>
+                    </Box>
                 </Box>
-                <Box style={{ display: "flex", flexDirection: "row", alignItems: "baseline" }}>
-                <InputField
-                    valueName="Github Repo"
-                    value={githubRepo}
-                    onChange={(e) => setGithubRepo(e.target.value)}
-                    style={{ width: "400px", fontSize: "20px" }}
+                <CommentSection
+                    comments={prComments}
+                    isToggleOn={isToggleOn}
+                    onChange={toggleComments}
                 />
-                <InputField
-                    valueName="Branch"
-                    value={githubBranch}
-                    onChange={(e) => setGithubBranch(e.target.value)}
-                    style={{ width: "240px", fontSize: "20px" }}
-                />
-                <SelectField
-                    valueName="PR"
-                    value={githubChangelogFolder}
-                    onChange={(e) => setGithubChangelogFolder(e.target.value)}
-                    options={prList}
-                    style={{ width: "240px", fontSize: "20px" }}
-                />
-                <Chip
-                    // format prTime to "YYYY-MM-DD HH:mm:ss", with GMT+9
-                    label={new Date(prTime).toLocaleString("ko-KR", { timeZone: "Asia/Tokyo" })}
-                    variant="outlined"
-                    color="primary"
-                    style={{ fontWeight: "500", fontSize: "16px" }}
-                />
-                </Box>
-                <p> 
-                    * use left, right arrow keys to navigate between PRs
-                </p>
             </Box>
-                
 
             {/* check if oldJsonUrl is not blank */}
             {githubChangelogFolder !== "" ? (
