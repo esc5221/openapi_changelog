@@ -13,6 +13,8 @@ import { makeStyles } from "@material-ui/core/styles";
 import { FormControl, InputLabel, MenuItem, Select, Input, Chip} from "@material-ui/core";
 import { Box } from "@material-ui/core";
 
+import useEventListener from "./Hook";
+
 class AugmentingLayout extends React.Component {
     render() {
         const { getComponent } = this.props;
@@ -168,6 +170,33 @@ function SwaggerComponent() {
     var [prList, setPrList] = useState([]);
     var [prTime, setPrTime] = useState("");
 
+    const keyPress = (e) => {
+        // left arrow
+        if (e.keyCode === 37) {
+            // set PR to previous one
+            if (prList.length > 0) {
+                let currentPR = githubChangelogFolder;
+                let previousPR = prList.indexOf(currentPR) + 1;
+                if (previousPR > prList.length-1) {
+                    previousPR = prList.length-1;
+                }
+                setGithubChangelogFolder(prList[previousPR]);
+            }
+        }
+        // right arrow
+        if (e.keyCode === 39) {
+            // set PR to next one
+            if (prList.length > 0) {
+                let currentPR = githubChangelogFolder;
+                let nextPR = prList.indexOf(currentPR) - 1;
+                if (nextPR < 0) {
+                    nextPR = 0;
+                }
+                setGithubChangelogFolder(prList[nextPR]);
+            }
+        }
+    }
+
     const handleChangeViewType = (event) => {
         setState({ ...state, [event.target.name]: event.target.checked });
         setViewType(event.target.checked ? "_cmp" : "");
@@ -204,6 +233,8 @@ function SwaggerComponent() {
         });
     }, [githubChangelogFolder]);
 
+    useEventListener("keydown", keyPress);
+
     return (
         <>
             <Box
@@ -215,7 +246,7 @@ function SwaggerComponent() {
             >
                 <Box style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
                     <Box style={{ width: "auto" , marginRight: "16px"}}>
-                        <h1>OpenAPI Changelogs</h1>
+                        <h1>OpenAPI Changelog</h1>
                     </Box>
                     <Switch
                         classes={{
@@ -259,7 +290,11 @@ function SwaggerComponent() {
                     style={{ fontWeight: "500", fontSize: "16px" }}
                 />
                 </Box>
+                <p> 
+                    * use left, right arrow keys to navigate between PRs
+                </p>
             </Box>
+                
 
             {/* check if oldJsonUrl is not blank */}
             {githubChangelogFolder !== "" ? (
